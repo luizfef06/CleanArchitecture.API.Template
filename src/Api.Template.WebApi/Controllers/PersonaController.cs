@@ -33,7 +33,12 @@ namespace Api.Template.CI.WebApi.Controllers
         [HttpGet("{id}")]
         public IActionResult Get([FromRoute] Guid id)
         {
-            return Ok(appService.Get(id));
+            var persona = appService.Get(id);
+            if (persona == null)
+            {
+                return NotFound("No records.");
+            }
+            return Ok(persona);
         }
 
         /// <summary>
@@ -44,7 +49,12 @@ namespace Api.Template.CI.WebApi.Controllers
         [HttpGet("name/{name}")]
         public IActionResult Get([FromRoute] string name)
         {
-            return Ok(appService.GetListByName(name));
+            var objects = appService.GetListByName(name);
+            if (objects == null)
+            {
+                return NotFound("No records.");
+            }
+            return Ok(objects);
         }
 
         /// <summary>

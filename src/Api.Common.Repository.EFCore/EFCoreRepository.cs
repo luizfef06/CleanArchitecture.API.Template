@@ -5,10 +5,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 namespace Api.Common.Repository.EFCore
 {
-    public class EfCoreRepository<TEntity> : IRepository<TEntity> where TEntity : DomainEntity
+    public class EfCoreRepository<TEntity> : IRepositoryAsync<TEntity> where TEntity : DomainEntity
     {
         protected readonly DbContext context;
         protected readonly DbSet<TEntity> dbSet;
@@ -16,14 +17,14 @@ namespace Api.Common.Repository.EFCore
         public void Dispose()
         {
             // Cleanup
-            //Dispose(true);
-            //GC.SuppressFinalize(this);
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
-        protected async virtual void Dispose(bool disposing)
+        protected void Dispose(bool disposing)
         {
-            //Commit
-            await context.SaveChangesAsync();;
+            ////Commit
+            //await context.SaveChangesAsync();
 
             // Cleanup
             context.Dispose();
@@ -43,23 +44,23 @@ namespace Api.Common.Repository.EFCore
             return dbSet.ToArray();
         }
 
-        public async void Delete(IEnumerable<Guid> ids)
+        public async Task Delete(IEnumerable<Guid> ids)
         {
             foreach (var id in ids)
             {
-                DeleteInstance(id);
+                await DeleteInstance(id);
             }
 
-            await context.SaveChangesAsync();;
+            await context.SaveChangesAsync();
         }
 
-        public async void Delete(Guid id)
+        public async Task Delete(Guid id)
         {
-            DeleteInstance(id);
-            await context.SaveChangesAsync();;
+            await DeleteInstance(id);
+            await context.SaveChangesAsync();
         }
 
-        public async void Delete(Expression<Func<TEntity, bool>> expression)
+        public async Task Delete(Expression<Func<TEntity, bool>> expression)
         {
             var instances = dbSet.Where(expression).ToArray();
             foreach (var instance in instances)
@@ -69,36 +70,37 @@ namespace Api.Common.Repository.EFCore
 
             if (instances.Any())
             {
-                await context.SaveChangesAsync();;
+                await context.SaveChangesAsync();
             }
         }
 
         public TEntity Find(Expression<Func<TEntity, bool>> expression)
         {
-            return dbSet.FirstOrDefault(expression);
+            var query = dbSet.Where(expression);
+            return query.FirstOrDefault(x => x.IsActive);
         }
 
         public TEntity FindById(Guid id)
         {
-            return dbSet.Find(id);
+            return Find(x => x.Id == id);
         }
 
         public IEnumerable<TEntity> FindList(Expression<Func<TEntity, bool>> expression)
         {
-            return dbSet.Where(expression).ToArray();
+            var query = dbSet.Where(expression);
+            return query.Where(x => x.IsActive).AsEnumerable();
         }
 
-        public async void Insert(TEntity instance)
+        public async Task Insert(TEntity instance)
         {
             instance.Id = Guid.NewGuid();
             instance.CreateDate = DateTime.UtcNow;
 
             dbSet.Add(instance);
-            var created = (await context.SaveChangesAsync());
-            var test = created;
+            await context.SaveChangesAsync();
         }
 
-        public async void Insert(IEnumerable<TEntity> instances)
+        public async Task Insert(IEnumerable<TEntity> instances)
         {
             foreach (var instance in instances)
             {
@@ -108,26 +110,26 @@ namespace Api.Common.Repository.EFCore
                 dbSet.Add(instance);
             }
 
-            await context.SaveChangesAsync();;
+            await context.SaveChangesAsync();
         }
 
-        public async void Update(TEntity instance)
+        public async Task Update(TEntity instance)
         {
             UpdateInstance(instance);
-            await context.SaveChangesAsync();;
+            await context.SaveChangesAsync();
         }
 
-        public async void Update(IEnumerable<TEntity> instances)
+        public async Task Update(IEnumerable<TEntity> instances)
         {
             foreach (var instance in instances)
             {
                 UpdateInstance(instance);
             }
 
-            await context.SaveChangesAsync();;
+            await context.SaveChangesAsync();
         }
 
-        private void DeleteInstance(Guid id)
+        private async Task DeleteInstance(Guid id)
         {
             var instance = FindById(id);
 

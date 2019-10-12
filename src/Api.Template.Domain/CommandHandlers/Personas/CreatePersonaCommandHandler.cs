@@ -9,25 +9,26 @@ namespace Api.Template.Domain.CommandHandlers.Personas
     public class CreatePersonaCommandHandler :
         ICommandHandlerTwoWay<CreatePersonaCommand, Persona>
     {
-        private readonly IRepository<Persona> repository;
+        private readonly IRepositoryAsync<Persona> repository;
 
-        public CreatePersonaCommandHandler(IRepository<Persona> repository)
+        public CreatePersonaCommandHandler(IRepositoryAsync<Persona> repository)
         {
             this.repository = repository;
         }
 
         public Task<Persona> Handle(CreatePersonaCommand command)
         {
-            return Task.Run(() =>
+            return Task.Run(async () =>
             {
                 //Domain Changes
                 var instance = new Persona
                 {
-                    Name = command.Name
+                    Name = command.Name,
+                    IsActive = command.IsActive
                 };
 
                 //Persistence
-                repository.Insert(instance);
+                await repository.Insert(instance);
 
                 return instance;
             });

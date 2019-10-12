@@ -16,13 +16,13 @@ namespace Api.Template.ApplicationService.Services
     {
         private readonly IMapper mapper;
         private readonly IMessageBus messageBus;
-        private readonly IRepository<Persona> repository;
+        private readonly IRepositoryAsync<Persona> repository;
 
         public PersonaAppService(
             IHttpContextAccessor contextAccessor,
             IMessageBus messageBus,
             IMapper mapper,
-            IRepository<Persona> repository) : base(contextAccessor)
+            IRepositoryAsync<Persona> repository) : base(contextAccessor)
         {
             this.messageBus = messageBus;
             this.mapper = mapper;

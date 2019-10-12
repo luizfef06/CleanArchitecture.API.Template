@@ -9,19 +9,18 @@ namespace Api.Template.Domain.CommandHandlers.Personas
     public class DeletePersonaCommandHandler :
         ICommandHandler<DeletePersonaCommand>
     {
-        private readonly IRepository<Persona> repository;
+        private readonly IRepositoryAsync<Persona> repository;
 
-        public DeletePersonaCommandHandler(IRepository<Persona> repository)
+        public DeletePersonaCommandHandler(IRepositoryAsync<Persona> repository)
         {
             this.repository = repository;
         }
 
-        public Task Handle(DeletePersonaCommand command)
+        public async Task Handle(DeletePersonaCommand command)
         {
             //Persistence
-            repository.Delete(command.Id);
+            await repository.Delete(command.Id);
 
-            return Task.CompletedTask;
         }
     }
 }

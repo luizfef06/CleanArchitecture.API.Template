@@ -22,7 +22,7 @@ namespace Api.Template.Infrastructure.InjectionModules
             builder.RegisterType<InMemoryMessageBus>().As<IMessageBus>();
 
             // Infra - DbContext
-            builder.RegisterType<EfCoreDbContext>().As<DbContext>();
+            builder.RegisterType<EfCoreDbContext>().As<DbContext>().InstancePerLifetimeScope();
 
             // Infra - Repository            
             builder.RegisterType<EFCoreUnitOfWork>()

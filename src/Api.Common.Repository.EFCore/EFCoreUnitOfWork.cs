@@ -25,17 +25,17 @@ namespace Api.Common.Repository.EFCore
             transaction = context.Database.BeginTransaction();
         }
 
-        public async void Commit()
+        public void Commit()
         {
-            await context.SaveChangesAsync();;
-            //transaction?.Commit();
+            context.SaveChanges();
+            transaction?.Commit();
         }
 
         public void Dispose()
         {
-            //// Cleanup
-            //Dispose(true);
-            //GC.SuppressFinalize(this);
+            // Cleanup
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         protected virtual void Dispose(bool disposing)

@@ -9,23 +9,23 @@ namespace Api.Template.Domain.CommandHandlers.Personas
     public class UpdatePersonaCommandHandler :
         ICommandHandlerTwoWay<UpdatePersonaCommand, Persona>
     {
-        private readonly IRepository<Persona> repository;
+        private readonly IRepositoryAsync<Persona> repository;
 
-        public UpdatePersonaCommandHandler(IRepository<Persona> repository)
+        public UpdatePersonaCommandHandler(IRepositoryAsync<Persona> repository)
         {
             this.repository = repository;
         }
 
         public Task<Persona> Handle(UpdatePersonaCommand command)
         {
-            return Task.Run(() =>
+            return Task.Run(async () =>
             {
                 //Domain Changes
                 var instance = repository.FindById(command.Id);
                 instance.Name = command.Name;
 
                 //Persistence
-                repository.Update(instance);
+                await repository.Update(instance);
 
                 return instance;
             });

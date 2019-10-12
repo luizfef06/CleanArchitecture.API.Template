@@ -184,14 +184,12 @@ namespace Api.Template.WebApi.Server
                 if (created)
                     Log.Information("Created!");
                 else
-                    Log.Information("ALready exists!");
+                    Log.Information("Already exists!");
             }
             catch (Exception ex)
             {
                 Log.Error(ex, ex.Message);
             }
-            
-
             Log.Information("Ending: Database Migration");
         }
     }

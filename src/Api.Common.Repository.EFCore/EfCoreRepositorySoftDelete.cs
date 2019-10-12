@@ -40,23 +40,23 @@ namespace Api.Common.Repository.EFCore
             return dbSet.AsEnumerable();
         }
 
-        public void Delete(IEnumerable<Guid> ids)
+        public async void Delete(IEnumerable<Guid> ids)
         {
             foreach (var id in ids)
             {
                 DeleteInstance(id);
             }
 
-            context.SaveChanges();
+            await context.SaveChangesAsync();;
         }
 
-        public void Delete(Guid id)
+        public async void Delete(Guid id)
         {
             DeleteInstance(id);
-            context.SaveChanges();
+            await context.SaveChangesAsync();;
         }
 
-        public void Delete(Expression<Func<TEntity, bool>> expression)
+        public async void Delete(Expression<Func<TEntity, bool>> expression)
         {
             var query = dbSet.Where(expression);
             var instances = query.Where(x => x.IsActive).AsEnumerable();
@@ -68,7 +68,7 @@ namespace Api.Common.Repository.EFCore
 
             if (instances.Any())
             {
-                context.SaveChanges();
+                await context.SaveChangesAsync();;
             }
         }
 
@@ -89,17 +89,17 @@ namespace Api.Common.Repository.EFCore
             return query.Where(x => x.IsActive).AsEnumerable();
         }
 
-        public void Insert(TEntity instance)
+        public async void Insert(TEntity instance)
         {
             instance.Id = Guid.NewGuid();
             instance.CreateDate = DateTime.UtcNow;
             instance.IsActive = true;
 
             dbSet.Add(instance);
-            context.SaveChanges();
+            await context.SaveChangesAsync();;
         }
 
-        public void Insert(IEnumerable<TEntity> instances)
+        public async void Insert(IEnumerable<TEntity> instances)
         {
             foreach (var instance in instances)
             {
@@ -110,24 +110,24 @@ namespace Api.Common.Repository.EFCore
                 dbSet.Add(instance);
             }
 
-            context.SaveChanges();
+            await context.SaveChangesAsync();;
         }
 
-        public void Update(TEntity instance)
+        public async void Update(TEntity instance)
         {
             instance.ModifiedDate = DateTime.UtcNow;
             UpdateInstance(instance);
-            context.SaveChanges();
+            await context.SaveChangesAsync();;
         }
 
-        public void Update(IEnumerable<TEntity> instances)
+        public async void Update(IEnumerable<TEntity> instances)
         {
             foreach (var instance in instances)
             {
                 UpdateInstance(instance);
             }
 
-            context.SaveChanges();
+            await context.SaveChangesAsync();;
         }
 
         private void DeleteInstance(Guid id)

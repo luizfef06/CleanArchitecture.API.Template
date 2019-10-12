@@ -16,7 +16,7 @@ namespace Api.Template.DbEFCore.Repositories
 
             var context = new DbContextOptionsBuilder<EfCoreDbContext>();
 
-            context.UseSqlServer(configuration.GetConnectionString("ApiDbConnection"));
+            context.UseCosmosSql("https://vet-dev1.documents.azure.com:443/", "QORSHEFMH7p64PfmelgKDqh3MHuqI8we0OlQeuYcqafnUudoYyO0ZzUpoHbkrofNMOk0Jo9lFn0LF4eKtL3YNA==", "vet-dev1");
 
             return new EfCoreDbContext(context.Options);
         }

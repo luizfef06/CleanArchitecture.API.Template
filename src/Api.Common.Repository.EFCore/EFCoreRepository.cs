@@ -16,14 +16,14 @@ namespace Api.Common.Repository.EFCore
         public void Dispose()
         {
             // Cleanup
-            Dispose(true);
-            GC.SuppressFinalize(this);
+            //Dispose(true);
+            //GC.SuppressFinalize(this);
         }
 
-        protected virtual void Dispose(bool disposing)
+        protected async virtual void Dispose(bool disposing)
         {
             //Commit
-            context.SaveChanges();
+            await context.SaveChangesAsync();;
 
             // Cleanup
             context.Dispose();
@@ -43,23 +43,23 @@ namespace Api.Common.Repository.EFCore
             return dbSet.ToArray();
         }
 
-        public void Delete(IEnumerable<Guid> ids)
+        public async void Delete(IEnumerable<Guid> ids)
         {
             foreach (var id in ids)
             {
                 DeleteInstance(id);
             }
 
-            context.SaveChanges();
+            await context.SaveChangesAsync();;
         }
 
-        public void Delete(Guid id)
+        public async void Delete(Guid id)
         {
             DeleteInstance(id);
-            context.SaveChanges();
+            await context.SaveChangesAsync();;
         }
 
-        public void Delete(Expression<Func<TEntity, bool>> expression)
+        public async void Delete(Expression<Func<TEntity, bool>> expression)
         {
             var instances = dbSet.Where(expression).ToArray();
             foreach (var instance in instances)
@@ -69,7 +69,7 @@ namespace Api.Common.Repository.EFCore
 
             if (instances.Any())
             {
-                context.SaveChanges();
+                await context.SaveChangesAsync();;
             }
         }
 
@@ -88,16 +88,17 @@ namespace Api.Common.Repository.EFCore
             return dbSet.Where(expression).ToArray();
         }
 
-        public void Insert(TEntity instance)
+        public async void Insert(TEntity instance)
         {
             instance.Id = Guid.NewGuid();
             instance.CreateDate = DateTime.UtcNow;
 
             dbSet.Add(instance);
-            context.SaveChanges();
+            var created = (await context.SaveChangesAsync());
+            var test = created;
         }
 
-        public void Insert(IEnumerable<TEntity> instances)
+        public async void Insert(IEnumerable<TEntity> instances)
         {
             foreach (var instance in instances)
             {
@@ -107,23 +108,23 @@ namespace Api.Common.Repository.EFCore
                 dbSet.Add(instance);
             }
 
-            context.SaveChanges();
+            await context.SaveChangesAsync();;
         }
 
-        public void Update(TEntity instance)
+        public async void Update(TEntity instance)
         {
             UpdateInstance(instance);
-            context.SaveChanges();
+            await context.SaveChangesAsync();;
         }
 
-        public void Update(IEnumerable<TEntity> instances)
+        public async void Update(IEnumerable<TEntity> instances)
         {
             foreach (var instance in instances)
             {
                 UpdateInstance(instance);
             }
 
-            context.SaveChanges();
+            await context.SaveChangesAsync();;
         }
 
         private void DeleteInstance(Guid id)

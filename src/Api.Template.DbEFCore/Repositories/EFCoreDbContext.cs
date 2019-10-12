@@ -1,5 +1,6 @@
 ﻿using Api.Template.DbEFCore.Mappings;
 using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace Api.Template.DbEFCore.Repositories
 {
@@ -9,11 +10,17 @@ namespace Api.Template.DbEFCore.Repositories
             : base(options)
         {
         }
-
+        
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //domain
             modelBuilder.ApplyConfiguration(new PersonaMapConfig());
+        }
+
+        public async Task<bool> CreateTheDatabaseAsync()
+        {
+            var created = await this.Database.EnsureCreatedAsync();
+            return created;
         }
     }
 }

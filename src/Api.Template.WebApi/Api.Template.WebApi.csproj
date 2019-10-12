@@ -16,6 +16,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Versioning" Version="3.1.6" />
     <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel" Version="2.2.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Cosmos.Sql" Version="2.2.0-preview1-35029" />
     <PackageReference Include="Microsoft.Extensions.Logging.AzureAppServices" Version="2.2.5" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.7.12" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.2.3" />
@@ -29,6 +30,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Api.Template.ApplicationService\Api.Template.ApplicationService.csproj" />
+    <ProjectReference Include="..\Api.Template.DbEFCore\Api.Template.DbEFCore.csproj" />
     <ProjectReference Include="..\Api.Template.Infrastructure\Api.Template.Infrastructure.csproj" />
   </ItemGroup>
 

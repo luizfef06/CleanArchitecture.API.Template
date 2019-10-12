@@ -74,7 +74,8 @@ namespace Api.Template.WebApi.Server
                 });
 
             var connectionStringApp = Configuration.GetConnectionString("ApiDbConnection");
-            services.AddDbContext<EfCoreDbContext>(options => { options.UseSqlServer(connectionStringApp); });
+
+            services.AddDbContext<EfCoreDbContext>(options => { options.UseCosmosSql("https://vet-dev1.documents.azure.com:443/", "QORSHEFMH7p64PfmelgKDqh3MHuqI8we0OlQeuYcqafnUudoYyO0ZzUpoHbkrofNMOk0Jo9lFn0LF4eKtL3YNA==", "vet-dev1"); });
 
             //Config Swagger
             services.AddSwaggerGen(c =>
@@ -173,18 +174,23 @@ namespace Api.Template.WebApi.Server
             UpdateDatabaseUsingEfCore(app);
         }
 
-        private void UpdateDatabaseUsingEfCore(IApplicationBuilder app)
+        private async void UpdateDatabaseUsingEfCore(IApplicationBuilder app)
         {
             Log.Information("Starting: Database Migration");
-
-            using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
+            try
             {
-                serviceScope
-                    .ServiceProvider
-                    .GetRequiredService<EfCoreDbContext>()
-                    .Database
-                    .Migrate();
+                var service = app.ApplicationServices.GetService<EfCoreDbContext>();
+                bool created = await service.CreateTheDatabaseAsync();
+                if (created)
+                    Log.Information("Created!");
+                else
+                    Log.Information("ALready exists!");
             }
+            catch (Exception ex)
+            {
+                Log.Error(ex, ex.Message);
+            }
+            
 
             Log.Information("Ending: Database Migration");
         }
